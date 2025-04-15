@@ -67,11 +67,22 @@ def main():
         elif selection == "2":
             pass
             # TODO 7: Print out: "The following are all the categories that have been sold:"
-
+            print("The following are all the categories that have been sold:")
+            
             # TODO 8: Print out: each of the categories stored in your database from the "sale" table with a number preceding it...
+            username = 'postgres'
+            password = 'M0nson101'
+            host = 'localhost'
+            port = '5432' # CHECK YOUR OWN PORT
+            database = 'is303'
+
+            engine = sqlalchemy.create_engine(f'postgresql+psycopg2://{username}:{password}@{host}:{port}/{database}')
+            dfImported = pd.read_sql(text("SELECT DISTINCT category FROM sales ORDER BY category;"), engine.connect())
+            print(dfImported)
 
             # TODO 9: Print out: "Please enter the number of the category you want to see summarized: "
-
+            userSelection = input("Please enter the number of the category you want to see summarized: ")
+            
             # TODO 10: Then, for the entered category, calculate and display the sum of total sales...
 
             # TODO 11: Then, display a bar chart...
