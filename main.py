@@ -17,37 +17,58 @@ def main():
     while True:
         selection = input("If you want to import data, enter 1.\nIf you want to see summaries of stored data, enter 2.\nEnter any other value to exit the program: ")
         if selection == "1":
-            pass
-            # TODO 2: Read Retail_Sales_Data.xlsx into python using pandas
+            df = pd.read_excel("Retail_Sales_Data.xlsx") # Read spreadsheet into a DataFrame
 
-            # TODO 3: Separate the "name" column into a "first_name" and "last_name" column
-                # TODO: Delete or overwrite the original "name" column
-            
-            # TODO 4: Fix the category column so that the categories actually match the product that was sold
+            name_column_index = 1 # The name column is position 1, we'll use this later
+            split_names = df['name'].str.split(' ', expand=True) # Split name into 2 columns, using _ as delimiter, and store temporarily
+            df.drop(columns=['name'], inplace=True) # Remove the name column
+
+            df.insert(loc=name_column_index, column='first_name', value=split_names[0]) # Put the first part of the split_names temporary df at spot 1, name it first_name
+            df.insert(loc=name_column_index + 1, column='last_name', value=split_names[1]) # Do the same with last names in the next column
+
+            # Create a dictionary with all the correct producs and categories
+            product_categories_dict = {
+                'Camera': 'Technology',
+                'Laptop': 'Technology',
+                'Gloves': 'Apparel',
+                'Smartphone': 'Technology',
+                'Watch': 'Accessories',
+                'Backpack': 'Accessories',
+                'Water Bottle': 'Household Items',
+                'T-shirt': 'Apparel',
+                'Notebook': 'Stationery',
+                'Sneakers': 'Apparel',
+                'Dress': 'Apparel',
+            }
+
+            df['Category'] = df['Product'].map(product_categories_dict) # Fix the category column using the dictionary
+
+            # For checking your results before saving (optional)
+            print("\nDataFrame after processing (first 5 rows):")
+            print(df.head())
+            print("---------------------------------\n")
+
 
             # TODO 5: Save the results as a table called "sale" in your is303 postgres database
+            # (Your database saving code will go here)
+
 
             # TODO 6: Print out the message: "You've imported the excel file into your postgres database."
+            # (This print statement should ideally come after successfully completing TODO 5)
+            # print("You've imported the excel file into your postgres database.")
+
 
         elif selection == "2":
             pass
             # TODO 7: Print out: "The following are all the categories that have been sold:"
 
-            # TODO 8: Print out: each of the categories stored in your database from the "sale" table with a number preceding it. You can't just hardcode the categories in, your program must read them from the database. 
-                # It should look like this:
-                    # 1: Technology
-                    # 2: Apparel
-                    # 3: Accessories
-                    # 4: Household Items
-                    # 5: Stationary
-            
+            # TODO 8: Print out: each of the categories stored in your database from the "sale" table with a number preceding it...
+
             # TODO 9: Print out: "Please enter the number of the category you want to see summarized: "
 
-            # TODO 10: Then, for the entered category, calculate and display the sum of total sales, the average sale amount, and the total units sold
+            # TODO 10: Then, for the entered category, calculate and display the sum of total sales...
 
-            # TODO 11: Then, display a bar chart ith the x axis as the products in that category and the y axis as the sum of the total sales of that product
-                # TODO: The title of the chart should be "Total Sales by Product in Category (but put the actual category name)"
-                # TODO: The x label should be "Product", the y label should be "Total Sales"
+            # TODO 11: Then, display a bar chart...
         else:
             print("Closing the program.")
             break
