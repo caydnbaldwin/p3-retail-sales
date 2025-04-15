@@ -51,12 +51,18 @@ def main():
 
             # TODO 5: Save the results as a table called "sale" in your is303 postgres database
             # (Your database saving code will go here)
-
+            username = "postgres"
+            password = "M0nson101"
+            host = "localhost"
+            port = "5432"
+            database = "is303"
+            engine = sqlalchemy.create_engine(f'postgresql+psycopg2://{username}:{password}@{host}:{port}/{database}')
+            df.to_sql('sale', engine, if_exists = 'replace', index = False)
 
             # TODO 6: Print out the message: "You've imported the excel file into your postgres database."
             # (This print statement should ideally come after successfully completing TODO 5)
             # print("You've imported the excel file into your postgres database.")
-
+            print("You've imported the excel file into your postgres database.")
 
         elif selection == "2":
             pass
