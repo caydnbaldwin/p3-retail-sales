@@ -20,7 +20,7 @@ def main():
             df = pd.read_excel("Retail_Sales_Data.xlsx") # Read spreadsheet into a DataFrame
 
             name_column_index = 1 # The name column is position 1, we'll use this later
-            split_names = df['name'].str.split(' ', expand=True) # Split name into 2 columns, using _ as delimiter, and store temporarily
+            split_names = df['name'].str.split('_', expand=True) # Split name into 2 columns, using _ as delimiter, and store temporarily
             df.drop(columns=['name'], inplace=True) # Remove the name column
 
             df.insert(loc=name_column_index, column='first_name', value=split_names[0]) # Put the first part of the split_names temporary df at spot 1, name it first_name
