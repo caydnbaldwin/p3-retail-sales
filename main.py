@@ -77,7 +77,9 @@ def main():
             database = 'is303'
 
             engine = sqlalchemy.create_engine(f'postgresql+psycopg2://{username}:{password}@{host}:{port}/{database}')
-            dfImported = pd.read_sql(text("SELECT DISTINCT category FROM sales ORDER BY category;"), engine.connect())
+            connection = engine.connect()
+            query = "SELECT DISTINCT category FROM sales ORDER BY category;"
+            dfImported = pd.read_sql(text(query), connection)
             print(dfImported)
 
             # TODO 9: Print out: "Please enter the number of the category you want to see summarized: "
