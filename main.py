@@ -41,7 +41,7 @@ def main():
                 'Dress': 'Apparel',
             }
 
-            df['Category'] = df['Product'].map(product_categories_dict) # Fix the category column using the dictionary
+            df['category'] = df['product'].map(product_categories_dict) # Fix the category column using the dictionary
 
             # For checking your results before saving (optional)
             print("\nDataFrame after processing (first 5 rows):")
@@ -63,31 +63,66 @@ def main():
             # (This print statement should ideally come after successfully completing TODO 5)
             # print("You've imported the excel file into your postgres database.")
             print("You've imported the excel file into your postgres database.")
+            print()
 
         elif selection == "2":
-            pass
             # TODO 7: Print out: "The following are all the categories that have been sold:"
             print("The following are all the categories that have been sold:")
             
             # TODO 8: Print out: each of the categories stored in your database from the "sale" table with a number preceding it...
-            username = 'postgres'
-            password = 'M0nson101'
-            host = 'localhost'
-            port = '5432' # CHECK YOUR OWN PORT
-            database = 'is303'
+            username = "postgres"
+            password = "M0nson101"
+            host = "localhost"
+            port = "5432"
+            database = "is303"
 
             engine = sqlalchemy.create_engine(f'postgresql+psycopg2://{username}:{password}@{host}:{port}/{database}')
             connection = engine.connect()
             query = "SELECT DISTINCT category FROM sales ORDER BY category;"
-            dfImported = pd.read_sql(text(query), connection)
-            print(dfImported)
+            categories_df = pd.read_sql(text(query), connection)
+
+            for iCount, stuff in enumerate(categories_df['category'], start=1):
+                print(f"{iCount}: {stuff}")
+
 
             # TODO 9: Print out: "Please enter the number of the category you want to see summarized: "
-            userSelection = input("Please enter the number of the category you want to see summarized: ")
-            
+            userSelection = int(input("Please enter the number of the category you want to see summarized: "))
+            selection_dict = {
+                1: 'Accessories',
+                2: 'Apparel', 
+                3: 'Household Items', 
+                4: 'Stationery', 
+                5: 'Technology'
+            }
+            selection = selection_dict[userSelection]
+            print(selection)
+
             # TODO 10: Then, for the entered category, calculate and display the sum of total sales...
+            query = """
+                    SELECT product, SUM(total_price) AS total_sales, AVG(total_price) AS average_sales, SUM(quantity_sold) AS total_quantity_sold
+                    FROM sales
+                    WHERE category = :category
+                    GROUP BY product
+                    ORDER BY total_sales DESC
+                    """
+            
+            df = pd.read_sql(text(query), connection, params={"category": selection})
+
+            iCoulumnSum = df['total_sales'].sum()
+            iColumnAve = df['average_sales'].median()
+            iCoulmnQuantity = df['total_quantity_sold'].sum()
+            
+            print(f"Total aales for {selection}: ${iCoulumnSum:.2f}")
+            print(f"Average sale amount for {selection}: ${iColumnAve:.2f}")
+            print(f"Total units sold for {selection}: {iCoulmnQuantity:.0f}")
 
             # TODO 11: Then, display a bar chart...
+            plot.bar(df['product'], df['total_sales'])
+            plot.title(f"Total Sales in {selection}")
+            plot.xlabel("Product")
+            plot.ylabel("Total Sales")
+            plot.show()
+
         else:
             print("Closing the program.")
             break
